@@ -3,23 +3,14 @@
 #include <math.h>
 
 Madgwick MadgwickFilter1;
-Madgwick MadgwickFilter2;
-#define Addr_Accl1 0x19
-#define Addr_Gyro1 0x69
-#define Addr_Mag1 0x13
-#define Addr_Accl2 0x18
-#define Addr_Gyro2 0x68
-#define Addr_Mag2 0x10
+#define Addr_Accl1 0x18
+#define Addr_Gyro1 0x68
+#define Addr_Mag1 0x10
 
 float xAccl1 = 0.00, yAccl1 = 0.00, zAccl1 = 0.00;
 float xGyro1 = 0.00, yGyro1 = 0.00, zGyro1 = 0.00;
 float xMag1 = 0, yMag1 = 0, zMag1 = 0;
 float roll1 = 0, pitch1 = 0, yaw1 = 0;
-
-float xAccl2 = 0.00, yAccl2 = 0.00, zAccl2 = 0.00;
-float xGyro2 = 0.00, yGyro2 = 0.00, zGyro2 = 0.00;
-float xMag2 = 0, yMag2 = 0, zMag2 = 0;
-float roll2 = 0, pitch2 = 0, yaw2 = 0;
 
 void BMX055_Init(uint8_t Addr_Accl, uint8_t Addr_Gyro, uint8_t Addr_Mag);
 void BMX055_Accl(uint8_t Addr_Accl, float &xAccl, float &yAccl, float &zAccl);
@@ -31,9 +22,7 @@ void setup() {
     Wire.setClock(400000L);  // 设置I2C速度为400kHz
     Serial.begin(115200);
     BMX055_Init(Addr_Accl1, Addr_Gyro1, Addr_Mag1);
-    BMX055_Init(Addr_Accl2, Addr_Gyro2, Addr_Mag2);
     MadgwickFilter1.begin(60);
-    MadgwickFilter2.begin(60);
 }
 
 void loop() {
@@ -54,30 +43,8 @@ void loop() {
     Serial.print(zAccl1); Serial.print(",");
     Serial.print(roll1); Serial.print(",");
     Serial.print(pitch1); Serial.print(",");
-    Serial.print(yaw1); Serial.print(",");
-
-    BMX055_Gyro(Addr_Gyro2, xGyro2, yGyro2, zGyro2);
-    BMX055_Accl(Addr_Accl2, xAccl2, yAccl2, zAccl2);
-    BMX055_Mag(Addr_Mag2, xMag2, yMag2, zMag2);
-
-    MadgwickFilter2.update(xGyro2, yGyro2, zGyro2, xAccl2, yAccl2, zAccl2, xMag2, yMag2, zMag2);
-    roll2 = MadgwickFilter2.getRoll();
-    pitch2 = MadgwickFilter2.getPitch();
-    yaw2 = MadgwickFilter2.getYaw();
-
-    Serial.print(xGyro2); Serial.print(",");
-    Serial.print(yGyro2); Serial.print(",");
-    Serial.print(zGyro2); Serial.print(",");
-    Serial.print(xAccl2); Serial.print(",");
-    Serial.print(yAccl2); Serial.print(",");
-    Serial.print(zAccl2); Serial.print(",");
-    Serial.print(roll2); Serial.print(",");
-    Serial.print(pitch2); Serial.print(",");
-    Serial.print(yaw2);Serial.print(",");
-    // read the input on analog pin 0:
-    int sensorValue = analogRead(A0);
-    // print out the value you read:
-    Serial.println(sensorValue);
+    Serial.println(yaw1);
+    delay(50);
 }
 
 void BMX055_Init(uint8_t Addr_Accl, uint8_t Addr_Gyro, uint8_t Addr_Mag) {
